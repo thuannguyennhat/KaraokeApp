@@ -49,7 +49,7 @@ namespace KaraokeApp
         {
             SongViewHolder songHolder = holder as SongViewHolder;
 
-			songHolder.txtSongName.Text = listSong[position].Name;
+			songHolder.txtSongName.Text = CheckNameLength(listSong[position].Name);
             songHolder.txtSinger.Text = "Chi dan";
 			songHolder.Link = listSong[position].Link;
 
@@ -82,6 +82,17 @@ namespace KaraokeApp
             View v = inflater.Inflate(Resource.Layout.itemSong, parent, false);
             return new SongViewHolder(v);
         }
+
+		private string CheckNameLength(string name)
+		{
+			int MAX_LENGTH_OF_NAME = 55;
+			if (name.Length > MAX_LENGTH_OF_NAME)
+			{
+				name = name.Substring(0 , MAX_LENGTH_OF_NAME - 3);
+				name += "...";
+			}
+			return name;
+		}
     }
 
     public class SongViewHolder : RecyclerView.ViewHolder

@@ -13,11 +13,17 @@ using Android.Graphics;
 using System.Net;
 using Android.Support.V4.Util;
 using System.Threading;
+using Android.Support.V4.Graphics.Drawable;
+using Android.Content.Res;
+using Android.Media;
 
 namespace KaraokeApp.Helper
 {
     class BitmapHelper
     {
+
+		private const float RADIUS = 10.0f;
+
         private static LruCache m_memoryCache;
         public BitmapHelper()
         {
@@ -35,6 +41,7 @@ namespace KaraokeApp.Helper
                 if (imageBytes != null && imageBytes.Length > 0)
                 {
                     imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
+					imageBitmap = getRoundedShape(imageBitmap);
                 }
             }
 
@@ -70,6 +77,31 @@ namespace KaraokeApp.Helper
         {
             return (Bitmap)m_memoryCache.Get(key);
         }
+
+		public static Bitmap getRoundedShape(Bitmap scaleBitmapImage)
+		{
+			int targetWidth = scaleBitmapImage.Width;
+			int targetHeight = scaleBitmapImage.Height;
+			Bitmap targetBitmap = Bitmap.CreateBitmap(targetWidth,
+				targetHeight, Bitmap.Config.Argb8888);
+
+			Canvas canvas = new Canvas(targetBitmap);
+
+			var xferPaint = new Paint(PaintFlags.AntiAlias);
+			xferPaint.Color = Color.Red;
+			canvas.DrawRoundRect(new RectF(0, 0, targetWidth, targetHeight), RADIUS, RADIUS, xferPaint);
+
+			xferPaint.SetXfermode(new PorterDuffXfermode(PorterDuff.Mode.DstIn));
+
+			Bitmap result = Bitmap.CreateBitmap(targetWidth,
+				targetHeight, Bitmap.Config.Argb8888);
+			Canvas resultCanvas = new Canvas(result);
+			resultCanvas.DrawBitmap(scaleBitmapImage, 0, 0, null);
+			resultCanvas.DrawBitmap(targetBitmap, 0, 0, xferPaint);
+
+			return result;
+		}
+
 
     }
 }

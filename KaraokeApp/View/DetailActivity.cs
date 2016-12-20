@@ -22,6 +22,7 @@ namespace KaraokeApp
 	{
 		private TextView _txvName, _txvSinger, _txvDescription;
 		private WebView _wvVideo;
+		private Button _btnChoose;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -29,10 +30,11 @@ namespace KaraokeApp
 			SetContentView(Resource.Layout.Detail);
 			// Create your application here
 			FindControl();
-
 			bool result = GetDataFromMain();
 			if (!result)
 				Toast.MakeText(this, "Problem", ToastLength.Short);
+
+			AddEvent();
 		}
 
 		//Pause video when the Activity on Pause
@@ -48,6 +50,7 @@ namespace KaraokeApp
 			_txvName = FindViewById<TextView>(Resource.Id.txvName);
 			_txvSinger = FindViewById<TextView>(Resource.Id.txvSinger);
 			_txvDescription = FindViewById<TextView>(Resource.Id.txvDesciption);
+			_btnChoose = FindViewById<Button>(Resource.Id.btnChoose);
 
 			_wvVideo = FindViewById<WebView>(Resource.Id.wvVideo);
 			// Config WebView
@@ -59,6 +62,14 @@ namespace KaraokeApp
 			_wvVideo.SetWebChromeClient(new WebChromeClient());
 		}
 
+		private void AddEvent()
+		{
+			_btnChoose.Click += (sender, e) => 
+			{
+				//Toast.MakeText(this, _txvName.Length().ToString(), ToastLength.Long);
+			};
+		}
+
 		private bool GetDataFromMain()
 		{
 			NavigationService nav = (NavigationService)ServiceLocator.Current.GetInstance<INavigationService>();
@@ -67,6 +78,7 @@ namespace KaraokeApp
 			if (song != null)
 			{
 				_txvName.Text = song.Name;
+				_txvDescription.Text = "Name Length: " + song.Name.Length.ToString();
 				//TODO Singer and Description
 				LoadVideo(song.Link);
 				return true;
