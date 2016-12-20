@@ -6,6 +6,7 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -16,7 +17,7 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace KaraokeApp
 {
-    [Activity(Label = "DetailActivity")]
+    [Activity(Label = "DetailActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class DetailsActivity : ActivityBase
 	{
 		private TextView _txvName, _txvSinger, _txvDescription;
@@ -28,6 +29,18 @@ namespace KaraokeApp
 			SetContentView(Resource.Layout.Detail);
 			// Create your application here
 			FindControl();
+
+			bool result = GetDataFromMain();
+			if (!result)
+				Toast.MakeText(this, "Problem", ToastLength.Short);
+		}
+
+		//Pause video when the Activity on Pause
+
+		protected override void OnPause()
+		{
+			base.OnPause();
+			_wvVideo.OnPause();
 		}
 
 		private void FindControl()
@@ -44,10 +57,6 @@ namespace KaraokeApp
 			_wvVideo.Settings.LoadWithOverviewMode = true;
 			_wvVideo.Settings.UseWideViewPort = true;
 			_wvVideo.SetWebChromeClient(new WebChromeClient());
-
-			bool result = GetDataFromMain();
-			if (!result) 
-				Toast.MakeText(this, "Problem", ToastLength.Short);
 		}
 
 		private bool GetDataFromMain()
